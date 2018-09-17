@@ -1,0 +1,150 @@
+% ******************************* Thesis Appendix A ****************************
+\chapter{Inputs}
+
+\section{Elastic Tensors for cementite under different levels of hydrogen loading}
+\label{sec:elastic_tensors}
+
+The elastic tensors for cementite loaded with varying amounts of hydrogen used for a Peierls analysis, discussed in \autoref{sec:elastic_results}, are given below. These were calculated by DFT using CASTEP \cite{Clark2005} by Miles Stopher and David Bombac, see \cite{Stopher2017} for more details. 
+
+\begin{align*}
+C_{ij}^{\text{0H}} &= \begin{pmatrix}
+387.2 & 153.0 & 155.4 & 0     & 0    & 0 \\
+153.0 & 342.7 & 158.0 & 0     & 0    & 0 \\
+155.4 & 158.0 & 308.5 & 0     & 0    & 0 \\
+0     & 0     & 0     & 133.1 & 0    & 0 \\
+0     & 0     & 0     & 0     & 16.8 & 0 \\
+0     & 0     & 0     & 0     & 0    & 132 \\
+\end{pmatrix} \\
+C_{ij}^{\text{5H}} &= \begin{pmatrix}
+373.7 & 155.3 & 128.4 & -1.7 & 3.4 & 6.3 \\
+155.3 & 343.6 & 173.8 & 3.3 & -7.3 & -0.8 \\
+128.4 & 173.8 & 286.6 & 2.6 & -9.9 & 1.7 \\
+-1.7  & 3.3   & 2.6   & 128.9 & -8 & 0.2 \\
+3.4   & -7.3  & -9.9  & -8 & 32.3 & -1 \\
+6.3   & -0.8  & 1.7   & 0.2 & -1 & 130.1 \\
+\end{pmatrix} \\
+C_{ij}^{\text{7H}} &= \begin{pmatrix}
+341.3 & 134.2 & 127.6 & 0 & 0 & 4.4 \\
+134.2 & 306.1 & 162.6 & 0 & 0 & 3.4 \\
+127.6 & 162.6 & 288.6 & 0 & 0 & 18.9 \\
+0 & 0 & 0 & 64.6 & 0.8 & 0 \\
+0 & 0 & 0 & 0.8 & 27.7 & 0 \\
+4.4 & 3.4 & 18.9 & 0 & 0 & 103.5 \\
+\end{pmatrix} \\
+C_{ij}^{\text{10H}} &= \begin{pmatrix}
+331.4 & 127.2 & 130.5 & 0 & 0 & -6.8 \\
+127.2 & 222.8 & 140.1 & 0 & 0 & 1.3 \\
+130.5 & 140.1 & 279.5 & 0 & 0 & -0.3 \\
+0 & 0 & 0 & 95.3 & 3.8 & 0 \\
+0 & 0 & 0 & 3.8 & 61.4 & 0 \\
+-6.8 & 1.3 & -0.3 & 0 & 0 & 44.3 \\
+\end{pmatrix}
+\end{align*}
+
+
+
+
+
+\section{Elastic Tensors for the ``simple materials'' used to benchmark the Peierls Model}
+
+
+
+\section{LAMMPS inputs}
+\label{sec:lammps_input}
+
+
+Input file:
+\par\bigskip
+\begin{tt}
+\# rpt26@cam.ac.uk getting his teeth into LAMMPS
+\par\bigskip
+units metal
+
+
+dimension 3
+
+
+boundary f f p
+
+
+atom\_style charge
+
+
+pair\_style lj/cut/coul/msm 15
+
+
+kspace\_style msm 1e-4
+
+
+read\_data data.example
+
+
+mass 1 22.9
+
+mass 2 35.45
+
+pair\_coeff 1 2 0.00206669 3.5545
+
+pair\_coeff 1 1 0.0039367 2.497
+
+pair\_coeff 2 2 0.00108497 4.612
+
+neighbor 3.2 bin
+
+neigh\_modify page 200000000
+
+neigh\_modify one 10000000
+
+velocity all zero linear
+
+velocity all zero angular
+
+fix 1 all setforce 0.0 0.0 0.0  
+
+thermo\_style multi
+
+run 0\end{tt}
+\par\bigskip
+
+
+\noindent
+Data file:
+\par\bigskip
+
+\begin{tt}
+
+\# RPT26 on a LAMMPS adventure
+\par\bigskip
+8 atoms
+
+ 2 atom types
+
+-395.944775937 397.060724007 xlo xhi
+
+-563.919131627 559.447761272 ylo yhi
+
+-0.997727668254 2.99318300476 zlo zhi
+
+
+\par\bigskip
+Atoms
+\par\bigskip
+  1  1   1   3.07845   6.64186         0
+  
+
+2  1   1   5.04441   9.39267   1.99546
+
+3  2  -1   4.96587   6.59076   1.99546
+
+4  2  -1   3.13155   9.42639         0
+
+5  1   1   6.86751   6.53876         0
+
+6  1   1   8.88857   9.31457   1.99546
+
+7  2  -1   8.78479    6.4919   1.99546
+
+8  2  -1   6.96277   9.35369         0
+
+\end{tt}
+

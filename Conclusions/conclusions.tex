@@ -1,0 +1,165 @@
+\chapter{Conclusions and future work}
+
+
+
+In this work the plastic behaviour of crystals has been investigated by use of the Peierls model. A new Peierls model has been created using Python and the associated projects, Numpy and Scipy, that allows the creation of a two or three dimensional Peierls model rather than one dimension as in previous models.
+
+Calculations based on linear elasticity and a misalignment potential were in qualitative agreement with experimental observations though quantitative results were not reliable. The model predicts the observed softening in cementite as hydrogen is added via the changes in the single crystal elastic constants as calculated by density functional theory.
+
+Dislocations in ionic solids were investigated, firstly with a Python implementation of the electrostatic and Lennard-Jones energy calculations. This implementation was deliberately without modification for computational ease to avoid the introduction of artefacts or complications. This was to ensure the results were as interpretable as possible.
+
+It was shown for the <1\,1\,0>\{0\,0\,1\} slip system in sodium chloride that the short range repulsion energy, here modelled by the Lennard-Jones potential, and the electrostatic energy were sufficient to predict the observed Peierls stress. As the dislocation moved the energy components were shown to vary out of phase, an analogy of the strain and misalignment energy components of elasticity based Peierls models.
+
+The <1\,1\,0>\{1\,\={1}\,0\} slip system could not be adequately described by the model, showing much larger energy changes than expected and unlikely variations in the dislocation width. The size of the simulation and the effects of boundaries were shown not to be responsible for these observations by the use of LAMMPS to simulate larger simulation cells with periodic boundary conditions. There is clearly at least one important factor in the behaviour of dislocations on this slip system that is not accounted for in the model presented here. Two possible factors are core reconstruction or the lack of polarisability in the atomic potentials.
+
+The complex crystal structures of the MAX phases were considered. These phases have clear chemical heterogeneity within the unit cell, which density functional theory calculations showed give rise to elastic heterogeneity. These results were in agreement with the macroscopic properties when combined in a slab model. The properties of these layers were shown to vary with the chemical nature of the layers, as characterised by the electronegativity, where the macroscopic properties did not.
+
+These elastic properties and the calculated generalised stacking fault energy were used in an adapted Peierls model to predict the Peierls stress of the MAX phases. The calculated Peierls stresses are in good agreement with the observed easy flow in the MAX phases, which is not adequately explained by the macroscopic elastic properties alone. The effect was shown to be strong, with $^{\tau_p}\!/_{G}$ varying by five orders of magnitude as the electronegativity difference between the layers of the structure vary by \SI{1.566}{\electronvolt} from \SIrange{1.588}{0.0214}{\electronvolt}. This shows that the local elastic heterogeneity, induced by a local chemical heterogeneity, on the scale of the dislocation core, can offer a route to tailoring the flow stress of complex crystals.
+
+The effect was also investigated in the \ce{Ti2Ni} structure, which is a complex metallic alloy with a large unit cell. The slip system was investigated by micropillar compression, and slip was shown to occur on the \{1\,1\,1\} planes. The slip direction was harder to determine conclusively but the partial <2\,\={1}\,\={1}\,> is more likely than the full <1\,\={1}\,0>. A series of alloys were chosen to alter the chemical heterogeneity of the  \{1\,1\,1\} planes. 
+
+The flow stress of the alloys was tested by nanoindentation of the \{1\,1\,1\} face of single crystals to ensure the Schmid factor remained constant. The hardness of the alloys varied significantly even though the range of heterogeneity was far smaller than that of the MAX phases; a reduction of \SI{\sim2}{\giga\pascal} from \SI{12.5}{\giga\pascal} to \SI{10.6}{\giga\pascal} or about \SI{15}{\percent} was observed for a change in the electronegativity difference of just \SI{0.066}{\electronvolt}.
+
+
+
+There are two clear avenues for future work: an experimental route and a modelling route. Experimentally the best validation of the model would be to confirm the Peierls stresses at cryogenic temperatures. The MAX phase results presented here agree with those experimental results that exist, i.e. that the flow stress of \ce{Ti2SiC3} at room temperature is around \SI{70}{\mega\pascal} which is similar to soft metals. However no direct evidence of the Peierls stress in the MAX phases has been produced to date.
+
+Another obvious route for experimental work to build on this study, which assumes that the conclusions drawn here are valid, is to attempt to find a system that might be more industrially relevant. The \ce{Ti2Ni} results are important because they show the effect occurs in an cubic structure with enough slip systems that full plasticity is possible, unlike in the hexagonal MAX phases. However the reduction of the hardness from over \SI{12}{\giga\pascal} to over \SI{10}{\giga\pascal} is clearly insufficient to produce an alloy with enough ductility to be useful as a structural material.
+
+Instead the best opportunities will be phases that are nearly sufficiently ductile, such that modification will more easily reach the critical point at which the alloy is tough enough for use as a structural material. In particular aluminium bearing intermetallics, such as tantalum aluminides which have large face-centred cubic crystal structures, would have sufficient corrosion resistance for higher temperature applications.
+
+The modelling aspects of the project could be taken forward in a number of ways. The initial creation of the atomic arrays could be improved. Screw dislocations have not been considered and the behaviour of screw dislocations can be quite different to edge dislocations. 
+
+Core reconstruction could be addressed by allowing atoms that fall within some core region to have their coordinates optimised directly, while atoms outside of this core are assumed to follow the functional form outlined in this work.
+
+Another improvement would be to integrate the ``atomic simulation environment'' into the energy calculation. This is a library that allows the use of Python to set up simulations and analysis of the results but integrates more efficient external projects for atomic calculations. A variety of molecular dynamics and quantum mechanical packages are available such that the most appropriate one could be used. For example, this would allow the investigation of polarisability of atoms in ionic materials more easily than the method used thus far.
+
+In summary, a Peierls model has been built with Python to extend the model to three dimensions, allowing the use of energy calculation methods such as interatomic potentials or the full elastic tensor. The effect of changing the stiffness tensor as hydrogen was added to cementite was shown to significantly soften the structure. Dislocations in ionic solids were modelled with partial success, fitting the hard slip system well but did not describe the behaviour of the soft slip system well. The behaviour of the MAX phases was investigated; DFT was used to show that elastic heterogeneity arises as a result of local chemical heterogeneity, as measured by electronegativity differences across the unit cell. The effect of this elastic heterogeneity on the Peierls stress was found to explain the anomalously low flow stresses observed experimentally. This effect was investigated experimentally in a series of alloys with the \ce{Ti2Ni} structure where the same softening was observed; as the chemical heterogeneity increased the hardness dropped. This shows that heterogeneity softening can occur in cubic crystals, presenting a possible route to tailored flow properties in complex crystals.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

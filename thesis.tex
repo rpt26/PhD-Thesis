@@ -1,0 +1,160 @@
+% 
+\documentclass[a4paper,12pt,twoside]{report}
+%customfont,draftclassic,print,index
+\title{PhD Thesis}
+\date{}
+% ********************************** Preamble **********************************
+% Preamble: Contains packages and user-defined commands and settings
+\input{Preamble/preamble}
+
+
+% \AtBeginDocument[english]{\def\chapterautorefname{Chapter}}
+
+%\usepackage{showframe}
+
+
+\renewcommand*\rmdefault{lmr}
+
+
+
+
+
+% ************************ Thesis Information & Meta-data **********************
+% Thesis title and author information, reference file for biblatex
+\input{thesis-info}
+
+
+% ******************************** Front Matter ********************************
+\begin{document}
+\pagenumbering{roman}
+
+\begin{titlepage}
+\centering
+\includegraphics[width = 7cm]{Figs/University_Crest}
+
+\vspace{2cm}
+
+
+{\huge Plastic Deformation\\}
+\vspace{5mm}
+{\huge in Complex Crystal Structures}
+
+\vspace{2.5cm}
+
+{\LARGE Robert P. Thompson} \\
+\vspace{8mm}
+{\large Pembroke College \\
+University of Cambridge \\
+
+\vspace{2.5cm}
+
+This dissertation is submitted for the degree of Doctor of Philosophy \\
+\vspace{3mm}
+
+December 2017 \\}
+
+\end{titlepage}
+
+
+\include{Declaration/declaration}
+
+\include{Abstract/abstract}
+
+\include{Acknowledgement/acknowledgement}
+% % % % % % % % % % % % % %  Adding TOC and List of Figures % % % % % % % % % % % % % % %
+\addtocontents{toc}{~\hfill\textbf{Page}\par}
+\setcounter{tocdepth}{1}
+
+\afterpage{%
+%\newgeometry{top=0.5cm,left=2cm}
+
+\tableofcontents
+\restoregeometry
+\clearpage
+}
+
+
+
+\afterpage{%
+%\newgeometry{top=0.5cm,left=2cm}
+\renewcommand{\listfigurename}{\vspace{-2.6cm}Figures}
+
+\listoffigures
+\restoregeometry
+\clearpage
+}
+
+
+
+
+% \printnomencl[space] space can be set as 2em between symbol and description
+% \printnomencl[3em]
+% \printnomencl
+
+\clearpage
+% % % % % % % % % % % % % % % % %  Main Matter  % % % % % % % % % % % % % % % %  % % % % % % 
+
+
+
+
+
+
+
+
+
+%\onehalfspacing
+
+
+\pagenumbering{arabic}
+
+\doublespacing
+\setcounter{page}{1}
+\cleardoublepage
+
+\fancyfoot[RO]{                           
+\setlength\unitlength{1cm}                
+  \begin{picture}(0,0)                    
+    \put(0.3,-1.5){                        %
+      \fbImageB{flipbook/disloc}{png}{width=2.5cm} 
+     }
+ \end{picture}
+}
+%The background literature review on plastic deformation
+\include{plastic_deformation/plastic_deformation}
+\cleardoublepage
+% the methods and results for building a new Peierls model
+\include{peierls_model/peierls_model}
+\cleardoublepage
+
+% The case for elastic heterogeneity in layered crystals
+\include{hetero_max_phases/hetero_max_phases}
+\cleardoublepage
+% The dislocations in MAX phases
+\include{dislocations_in_max_phases/dislocations_in_max_phases}
+\cleardoublepage
+% The effect in Ti2Ni structured intermetallics
+\include{hardness_of_ti_2_ni/hardness_of_ti_2_ni}
+\cleardoublepage
+% Some overall conclusions/further work
+\include{Conclusions/conclusions}
+
+
+% ********************************** Bibliography ******************************
+
+
+\cleardoublepage
+
+\singlespacing
+\renewcommand*{\bibfont}{\footnotesize}
+\printbibliography[heading=bibintoc]
+\normalsize
+
+
+% ********************************** Appendices ********************************
+\appendix
+\include{Appendix_1/appendix1}
+%\include{Appendix2/appendix2}
+
+
+
+\end{document}

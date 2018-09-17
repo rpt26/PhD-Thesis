@@ -1,0 +1,91 @@
+
+
+In most structural applications a catastrophic brittle failure by fast fracture is unacceptable. Furthermore many materials used in devices or coatings both protective and functional often fail by brittle fracture and so a material that is more ductile, at least relatively, may have improved performance. This has motivated numerous attempts to find ductility criteria to predict from simple and easily measurable properties whether a material will fail in a ductile or a brittle manner.
+
+The Pugh ratio, $B/G$ where $B$ is the bulk modulus and $G$ is the shear modulus, is one of the most widely known and is still used today \cite{Sangiovanni2011,Aryal2014,Wang2015,Hu2016,Zhuang2017}. This ratio is used to indicate the relative ease of either plastic deformation or brittle fracture. High values of this ratio should tend to indicate ductility while low values should indicate brittleness. This can be physically justified on the basis that the resistance to slip is proportional to the shear modulus: as Pugh discussed, the Orowan bowing stress is proportional to $G$, but it can also be justified from the lattice resistance, which is also proportional to $G$, see \autoref{eqn:Peierls_Stress}. For a given lattice, i.e.\ constant $d/b$, the shear flow stress should scale with the shear modulus. In a similar way, the ease of fracture must be related to the ease of separating layers of atoms. Since this must relate to the energy of straining bonds and the energy of creating surfaces, Pugh took the bulk modulus is a reasonable proxy. This gave good results empirically when \citet{Pugh1954} analysed a wide range of material data.
+
+However this does not accurately capture reality. For example for two face-centred cubic metals, aluminium and copper, for which $B/G$ is 2.74 and 3.00 respectively, and these metals both show large elongations to failure. For rhodium and iridium, $B/G$ is 1.77 and 1.74 respectively, and they show small elongations to failure \cite{Pugh1954}. On the other hand very brittle phases are easily found with similar values of $B/G$; the C15 Laves phases \cite{Stein2004,Stein2005} \ce{NbCr2} and \ce{HfV2} have large values of $B/G$, 2.88 and 3.47 respectively \cite{Chu1995}, but exhibit no significant plasticity. In contrast \ce{Ti3SiC2} has a value of $B/G$ of 1.37 (using experimental polycrystalline values) \cite{Barsoum2011} and shows very easy slip.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Maybe the graph of $B/G$ ratios for fcc metals and Laves phase here
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\citet{rice1974} suggested an alternative approach based on the energetics of sharp crack tips and whether blunting dislocations can be spontaneously emitted. The analysis used the Peierls approach to evaluate the energy of a dislocation close to free surfaces and found that the term $Gb/\gamma_s$, where $\gamma_s$ is the surface energy, $G$ is the shear modulus and $b$ is the Burgers vector, to be a dimensionless value that reflects the propensity to fail by either ductile or brittle means and is justified along similar lines to the Pugh ratio. $Gb$ scales with the energy of emitting a blunting dislocation, so high values will oppose the formation of dislocations and blunting of cracks, thus favouring brittle failure. On the other hand $\gamma_s$ represents the energy of the crack and high values will tend to favour reduction of the surface by blunting and favour ductile failure. 
+
+The Rice and Thomson criterion \cite{rice1974} was updated by \citet{Rice1992} to be the quotient $\gamma_{us}/ \gamma_s$ where $\gamma_{us}$ is the unstable stacking fault energy and $\gamma_s$ is still the surface energy. This criterion follows essentially the same reasoning but no longer makes the assumption that $\gamma_{us}$ scales linearly with $G$.
+
+An alternative condition was put forward by \citet{Zhou1994} that does not include the surface energy. They propose the energy to blunt a crack by dislocation emission is dependent on $\gamma_s$ in the same way as the energy of growing the sharp crack, since the formation of a dislocation creates ledges and alters the surface area. In this way the ratio of the energies is independent of the surface energy (though the absolute value of either energy is clearly dependent on $\gamma_s$) and so the crossover from brittle to ductile behaviour is also independent of the surface energy. They find instead that the appropriate quotient is $\gamma_{us} / Gb$ and set a critical value of 0.014. As the authors note, this is an interesting result because the critical threshold is not the cross over in a competition between two processes, one of fracture and one of plasticity, but instead is equivalent to a critical value of the Peierls energy.
+
+One drawback of these more physically insightful approaches is that strictly they apply only for one slip system and one mode of fracture on one plane and so must be recalculated for all possible combinations and then averaged with some appropriate statistical weighting. These criteria can become rather cumbersome: experimental determination of the unstable stacking fault energy and the surface energy is laborious, and calculations quickly become time consuming as combinations of fracture and slip modes are considered. They also rely in all cases on two assumptions: Firstly the energy barrier for slip or emission of dislocations, via the Peierls model, scales linearly with the stacking fault energy or shear modulus; secondly that the stress required for slip scales simply with the Peierls energy. These quantities will be related but it is unlikely that the relationships are simple, as would be needed for such ductility criteria to be reliable.
+
+An example for which these criteria break down is the contrast between the phases titanium carbide, \ce{TiC}, and the ternary carbide MAX phase \ce{Ti3SiC2}. The above models all correctly predict that \ce{TiC} is brittle: The value of $\gamma_s / \gamma_{us} = 1.76$ is too small with values in excess of 3 required for ductility \cite{Price1992,Yu2003} and the values of $Gb/\gamma_s = 20.48$ and $\gamma_{us} / Gb = 0.032$ are too large to indicate ductile behaviour \cite{Yu2003,Medvedeva2011}. However these same criteria produce similar values for \ce{Ti3SiC2}, for which $\gamma_s / \gamma_{us} = 1.42$, $Gb/\gamma_s = 27.3$ and $\gamma_{us} / Gb = 0.0219$ \cite{Medvedeva2011,Farle2015}. The Pugh model and the two Rice models \cite{Pugh1954,rice1974,Rice1992} actually predict the MAX phase to be more brittle than stoichiometric titanium carbide. This is at odds with reality since titanium carbide has a yield stress of over \SI{2}{\giga\pascal} at temperatures below \SI{600}{\celsius} \cite{Miracle1983} while at room temperature the critical resolved shear strength of \ce{Ti3SiC2} is reported to be \SI{36}{\mega\pascal} \cite{Barsoum1999}, though reanalysis of the data suggests the strength is higher at \SI{77}{\mega\pascal} \cite{Humphrey2012}.
+
+
+The inability to capture or predict the ductility or brittleness of materials limits the use of these ductility criteria; while they highlight some perhaps noteworthy trends they could not have been used to predict the anomalous yielding in the MAX phases and other layered compounds that are now being commercialised to take advantage of the high temperature capability that arises from their chemistry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% some data on ZCT and Rice etc...
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,462 @@
+%*******************************************************************************
+%****************************** Second Chapter *********************************
+%*******************************************************************************
+
+\chapter{A new Peierls model}
+\label{chap:peierls_model}
+\graphicspath{{peierls_model/Figs/}}
+
+\epigraph{Calculations are made of the size of a dislocation}{\emph{R.E. Peierls}}
+
+
+Though there are a number \cite{Nabarro1947,Huntington1955, puls1976, Vitek1992,  Bulatov1997, Lubarda2007, Clegg2006,Gouriet2015} of Peierls models published in the literature over the decades since \citet{Peierls1940} first presented his solution, few have been applicable to situations beyond the initially envisaged problem, which is somewhat narrowly defined for an orthorhombic lattice that obeys linear elasticity. In this chapter a model is presented that allows  the consideration of energies defined by linear elasticity using the full elastic tensor, empirical potentials and generalised stacking fault energies. The model is also kept modular to allow extension to other formulations, e.g. a full quantum mechanical treatment using density functional theory.
+
+This model does not aim to radically deviate from all the previous work on the Peierls model, there is no need to as much progress has been made over the years. Instead this new model aims to bring together as much of that previous work as possible to try and provide new insight into the behaviour of dislocations. For example, the use of ionic empirical potentials is not new, \cite{Hoagland1976}, and neither is the idea of fitting a misalignment potential and numerical optimisation of the structure rather than closed form solutions \cite{Bulatov1997}, others have considered a more generalised displacement field \cite{Lubarda2007} and the full elastic stiffness tensor has been used since very early in the study of dislocations \cite{Eshelby1949}. There is however scope to further combine these different factors, along with more powerful computers in the modern era, to provide a more generalised model while relaxing the assumptions and simplifying constraints enough to provide insights into unusual dislocation behaviour.
+
+The Python programming language was chosen for a number of reasons. Firstly the Python model is inherently modular, which provides a flexible structure, allowing parts of the model to be altered, extended or replaced quickly and easily. Secondly Python is also widely used for scientific computing, with a comprehensive body of documentation and a large support community. Finally Python has a very large number of extending modules providing advanced capabilities, particularly projects like NumPy and SciPy. NumPy provides a powerful and efficient implementation of arrays and a range of simple functions as well as more advanced linear algebra operations. SciPy is a project built on the basic data structure of the NumPy array and provides advanced algorithms and convenience functions including differential equations, numerical solvers and optimisers, image processing and statistical functions. The code written in this work has been published on-line \cite{code}. 
+
+To calculate the Peierls stress we must find the changes in the dislocation energy as a dislocation moves from one low energy position to the next. The variable $\alpha$ is used to denote the  displacement of the dislocation as a fraction of the Burgers vector, $b$. Since boundary conditions are insufficient to define the atomic configuration, for each value of $\alpha$ the atomic configuration of the dislocation that minimises the energy must be found. Once sufficient samples of $\alpha$ have been made the Peierls stress can be calculated by:
+\begin{equation}
+\tau_p = \frac{1}{lb^2}   \left. \frac{\partial U}{\partial \alpha} \right|_{max} .
+\end{equation}
+where $l$ is the length of dislocation line for which the energy, $U$, is calculated for and $b$ is the Burgers vector.
+
+For a given value of $\alpha$ the lowest energy configuration is found via three steps: first the definition, creation and representation of an atomic configuration, second the evaluation of the overall energy, and third the iterative improvement of the configuration to find the minimum energy. Taken together the first two steps can be thought of as a function that takes the value of $\alpha$ along with some input parameters as arguments and returns the total energy:
+
+\begin{equation}
+U_{\text{total}} = f(\alpha, p_1, p_2,...,p_n )
+\label{eqn:energy_as_function}
+\end{equation}
+The input parameters, $p_i$, could be as general as the coordinates of every atom in the configuration or as specific as the single parameter defined by Peierls in his original treatment, the width of the dislocation. The main difference is trade off between computational tractability and the risk of over-constraining the model. Algorithms exist for finding the minimum of functions of the form given in \autoref{eqn:energy_as_function}. Such algorithms are much faster for functions with small numbers of parameters and some algorithms are not reliable for large numbers of parameters. Hence decisions about how to define an atomic configuration will have consequences for the optimisation of that configuration to find the lowest energy.
+
+Here the positions of the atoms are used to define the configuration and then constraints applied. Hence individual atoms are represented in space by coordinates as an array of the form:
+$$ atoms = \begin{pmatrix}
+x_1 & y_1 & z_1  \\
+x_2 & y_2 & z_2  \\
+.   &.    &.     \\
+.   &.    &.     \\
+x_n & y_n & z_n  \\
+\end{pmatrix}
+$$
+where $x_i$, $y_i$ and $z_i$ are coordinates in Euclidean space of the $i$th atom, in units of \r{A}ngstr\"{o}ms, i.e. \emph{not} relative to any crystallographic axes.
+
+This representation can be extended: for example in the case of ionic solids the charge on each ion would be a necessary parameter for any energy calculation and would be represented thus:
+$$
+atoms = \begin{pmatrix}
+x_1 & y_1 & z_1 & q_1 \\
+x_2 & y_2 & z_2 & q_2 \\
+.   &.    &.    &.    \\
+.   &.    &.    &.    \\
+x_n & y_n & z_n & q_n \\
+\end{pmatrix}
+$$
+
+This could be extended to an arbitrary number of parameters such as parameters for empirical potentials, labels for symmetrically distinct ions of the same species etc.
+
+
+
+
+
+\section{Building a dislocation}
+\FloatBarrier
+\label{sec:build}
+
+\input{peierls_model/building_a_dislocation.tex}
+
+
+
+
+
+
+
+
+\section{Evaluating the dislocation energy}
+\label{sec:dislocation_energy}
+
+\input{peierls_model/dislocation_energy.tex}
+
+
+
+
+\section{Results and Discussion}
+
+\subsection{Elastic Energy Calculations}
+\label{sec:elastic_results}
+\FloatBarrier
+
+
+The equilibrium dislocation configuration for a given dislocation position was calculated by optimisation of the dislocation structure with respect to the calculated energy, the sum of the strain energy in the half crystals either side of the slip plane and the misalignment energy in the slip plane. As discussed in section~\ref{sec:optimisers} the choice of optimiser is affected by the behaviour of the function. The BFGS was found to be faster than the Nelder-Mead, though both algorithms produced very similar results, within the tolerance (i.e. the error that can be tolerated) set for the algorithms to terminate. It was found that only a very small error in the result could be tolerated in deciding the algorithm had converged. Tolerating larger errors led to inconsistent results. A relative error of around \num{1e-7} was usually sufficiently low. This is important because small changes in the energy are being studied. 
+
+The variation of the dislocation energy with respect to the dislocation parameters, as defined in \autoref{eqn:displacement_field}, was investigated. These calculations were performed for a dislocation in copper at $\alpha=0$. The simulation cell used extended to \num{800} Burgers vectors from the dislocation core, which is approximately \SI{0.4}{\micro\meter} across the whole simulation.
+
+First the dislocation structure was optimised to find the equilibrium configuration, then the  various parameters were varied away from these equilibrium values individually. The results are shown in \autoref{fig:variation_of_U_with_params}. 
+
+
+\begin{figure}
+\centering
+\begin{subfigure}{0.4\textwidth}
+\centering
+\includegraphics[width=\textwidth]{U_vs_w}
+\caption{The variation in the dislocation energy with the dislocation width.\label{fig:U_vs_w}}
+\end{subfigure}
+~
+\begin{subfigure}{0.4\textwidth}
+\centering
+\includegraphics[width=\textwidth]{U_vs_c1}
+\caption{The variation in the dislocation energy with the dislocation parameter $\mathbf{c_1}$.}
+\end{subfigure}
+
+\begin{subfigure}{0.4\textwidth}
+\centering
+\includegraphics[width=\textwidth]{U_vs_c2}
+\caption{The variation in the dislocation energy with the dislocation parameter $\mathbf{c_2}$.}
+\end{subfigure}
+~
+\begin{subfigure}{0.4\textwidth}
+\centering
+\includegraphics[width=\textwidth]{U_vs_c3}
+\caption{The variation in the dislocation energy with the dislocation parameter $\mathbf{c_3}$.}
+\end{subfigure}
+\captionsetup{width=\textwidth,font={sf,scriptsize},labelfont=bf}
+\caption[The variation of the line energy with the displacement parameters.]{The variation of the calculated energy of a dislocation in copper at the $\mathbf{\alpha=0}$ position, calculated for a simulation extending \SI{0.4}{\micro\meter} from the dislocation core. The parameters are as defined in \autoref{eqn:displacement_field}. Only one parameter was varied at a time, all the others were held constant at their equilibrium values. The total energy is the solid black line, the strain energy in the two half crystals is the dashed red line and the misalignment energy in the slip plane is the dotted blue line. \label{fig:variation_of_U_with_params}}
+\end{figure}
+
+
+\begin{table}[b!]
+
+
+\centering
+\begin{tabular}{ l c c c }
+\hline
+\rule[2.5ex]{0pt}{0pt}Parameter                & Ideal             & Simulated $\alpha=0$  & Simulated $\alpha=0.5$  \\
+\hline
+$w$ (\si{\angstrom})  \rule[2.5ex]{0pt}{0pt}   & 1.581             & 2.441                 & 2.431 \\
+$c_1$ (\si{\angstrom})                         & 0.308             & 0.36268                & 0.36270 \\
+$c_2$ (\si{\angstrom})                         & 0.308             & 0.293070               & 0.293075 \\
+$c_3$ (\si{\angstrom}) \rule[-0.5ex]{0pt}{0pt} & -0.0493           & -0.061864               & -0.061862 \\
+Energy (\si{J/m})                              &  \num{1.56795e-9} & \num{1.20965e-08}      & \num{1.20963e-08} \\
+\hline
+\end{tabular}
+\caption[A comparison between the ideal and simulated dislocation parameters]{A comparison of the ideal dislocation parameters and those found by optimising the energy of a simulated dislocation, the ideal values of $c_1$, $c_2$, $c_3$ and $w$ are calculated from the elastic constants using \autoref{eqn:expressions_for_the_ideal_disloca_parameters}. The ideal energy is taken to be $^1\!/_2 Gb^2$.\label{tab:dislocation_params}}
+\end{table}
+
+As expected all the parameters showed a single minimum and the variation was smooth, so a variational approach is applicable and the optimiser is likely to be reliable, i.e. the lowest energy configuration can be said to be the configuration a dislocation would take. 
+
+
+
+
+
+
+The values of these parameters have simple solutions for the case of an isotropic elastic medium, given in \autoref{eqn:half_width} and \autoref{eqn:expressions_for_the_ideal_disloca_parameters}. These only depend on the Poisson's ratio, which for copper is \num{\sim0.34} \cite{Koster1961}, and the lattice parameters. These ideal values are compared with the optimised values in \autoref{tab:dislocation_params}. The energy of the dislocation is approximately $4Gb^2$, higher than the $\sim0.5 G b^2$ that might be expected. However, the values of the dislocation configuration parameters are similar to the ideal values, as calculated from \autoref{eqn:expressions_for_the_ideal_disloca_parameters}. The atomistic model differs from the isotropic elastic continuum in that the values of the parameters vary as a function of $\alpha$ and the symmetry between $c_1$ and $c_2$, which are equal for an isotropic material, is broken.
+
+The small variations in the values of the dislocation parameters and the dislocation energy, both as relative and absolute values, require that care is taken in the computation not to introduce errors. One example that has already been mentioned is the tolerance, or relative error that can be tolerated before the optimisation is terminated. If the tolerance is not tight enough,  this manifests as noise that depends on the initial guess to start the optimisation search, or the exact choices of parameters in the optimisation algorithm. This apparent noise would be deterministic but unpredictable, so would appear random. 
+
+Another problem was the precision of the floating point arithmetic. It was found that \num{64} bit precision was usually sufficient, but some systems, particularly diamond, had such drastically different magnitudes for the strain and misalignment energies that the sum rounded to the strain energy. The dislocation energy would then be wrongly optimised to reduce that term alone. While the strain energy term dominated the line energy for these materials, principally silicon, the changes in the misalignment energy and the changes in the strain energy term were not nearly as different as the values themselves. The problem was addressed by using NumPy's \num{128} bit precision.  
+
+
+
+
+
+\begin{figure}
+\centering
+% \begin{subfigure}{\textwidth}
+% \centering
+% \includegraphics[width=0.6\textwidth]{disloc_params_vs_alpha}
+% \caption{The variation of the dislocation configuration parameters, $\mathbf{w}$, $\mathbf{c_1}$, $\mathbf{c_2}$ and $\mathbf{c_3}$, as a function of $\mathbf{\alpha}$.}
+% \end{subfigure}
+
+\begin{subfigure}{0.45\textwidth}
+\centering
+\includegraphics[width=\textwidth]{w_vs_alpha}
+\caption{The variation of the dislocation width, $w$, as a function of $\alpha$. The width defines the region of the slip plane where the misalignments are greater than half the maximum value.}
+\end{subfigure}
+~
+\begin{subfigure}{0.45\textwidth}
+\centering
+\includegraphics[width=\textwidth]{c1_vs_alpha}
+\caption{The variation of the dislocation width, $c_1$, as a function of $\alpha$. The parameter $c_1$ represents the magnitude of the $xy$ strains.\rule[-\baselineskip]{0pt}{0pt}}
+\end{subfigure}
+
+\begin{subfigure}{0.45\textwidth}
+\centering
+\includegraphics[width=\textwidth]{c2_vs_alpha}
+\caption{The variation of the dislocation width, $c_2$, as a function of $\alpha$. The parameter $c_2$ represents the magnitude of the $yx$ strains.\rule[-\baselineskip]{0pt}{0pt}\label{fig:c2_vs_alpha}}
+\end{subfigure}
+~
+\begin{subfigure}{0.45\textwidth}
+\centering
+\includegraphics[width=\textwidth]{c3_vs_alpha}
+\caption{The variation of the dislocation width, $c_3$, as a function of $\alpha$. The parameter $c_3$ represents the magnitude of the bending that arises in a crystal as a result of the introduction of an extra half plane of atoms.}
+\end{subfigure}
+
+\caption[The variation of the displacement parameters with dislocation position.]{The variation of the displacement field configuration parameters with $\mathbf{\alpha}$. Only small changes in the parameters were seen, the largest changes were seen in $w$ and the smallest in $\mathbf{c_3}$. The parameter all vary smoothly and approach $\mathbf{\alpha=0, 0.5}$ with no gradient, as required for equilibrium. Some noise was observed in the value of $\mathbf{c_2}$ and $\mathbf{c_3}$. \label{fig:disloc_params_vs_alpha}}
+\end{figure}
+
+
+The variation of the dislocation parameters and the dislocation energy were investigated by randomly sampling $\alpha$ in the range \numrange{0}{0.5} and optimising the dislocation configuration to give the lowest energy. The variation in the dislocation configuration parameters is given in \autoref{fig:disloc_params_vs_alpha}, while the variation of the total energy is given in \autoref{fig:Copper_U_tot_vs_alpha} and the relative changes in the different energy components is shown in \autoref{fig:copper_800_rel_energies}.
+
+An important observation is that the periodicity of the dislocation energy, and indeed the dislocation configuration, predicted by this model is $b$, not $^b\!/_2$ as predicted by \citet{Peierls1940,Clegg2006}. As discussed in Chapter~\ref{chap:plastic_deformation}, this is expected based on the symmetry inherent in the model. 
+
+Peierls introduced an implicit symmetry by assuming that the dislocation configuration does not change as the dislocation moves and thus predicted a period of $^b\!/_2$. The formulation was changed by \citet{Huntington1955} to predicted a period of $b$. The model presented by \citet{Clegg2006} included an implicit symmetry since motion of atoms was limited to the slip direction and the strain energy was calculated from strains in the atomic bonds rather than as an integral over an elastic medium. This meant that there was no distinction between the atoms above the slip plane and the atoms below the slip plane, and thus no distinction between the $\alpha = 0$ and $\alpha = 0.5$ position. The current model has no such symmetry across the slip plane, due to the logarithmic term in \autoref{eqn:displacement_field}, and so the periodicity of $b$ is expected.
+
+The dislocation parameters vary smoothly from $\alpha = 0$ to $\alpha = 0.5$ and approach the two equilibrium positions with zero gradient as required by equilibrium. There is some noise in the value of $c_2$, as shown in \autoref{fig:c2_vs_alpha}. This is likely due to the changes in the dislocation parameters being close to the tolerance of the optimisation algorithm. This is not sufficiently noisy to present a problem, but highlights the need for care in deciding the trade off between computational time and the accuracy of the calculated values.
+
+
+
+\begin{figure}
+\captionsetup{width=0.6\textwidth,font={sf,scriptsize},labelfont=bf}
+\centering
+\includegraphics[width=0.5\textwidth]{Copper_800_U_tot}
+\caption[Energy variation of a dislocation in copper with the dislocation position.]{The variation of the dislocation energy with position for a dislocation in copper. The results shown are for a model including atoms to a distance of 800 Burgers vectors from the dislocation core, i.e. a distance of $\sim$\SI{300}{\nano\metre}.  Note that the changes in energy are small relative to the absolute value of the dislocation energy, at around \num{1e-5}\,$U_{\text{disloc}}$.\label{fig:Copper_U_tot_vs_alpha}}
+\end{figure}
+
+The variation of the energy with $\alpha$, \autoref{fig:Copper_U_tot_vs_alpha}, was qualitatively as expected from previous work \cite{Bulatov1997,Clegg2006}: a smooth but very small variation in the energy, some five orders magnitude smaller than the value of the dislocation energy. The variation of the two components of the energy was also as expected. This is most easily seen as changes by setting the energy at $\alpha=0$ to be zero, as shown in \autoref{fig:copper_800_rel_energies}. The strain energy and the misalignment energy vary out of phase with each other, thus the two components of the energy experience larger variations than the total. It is also possible that the relative magnitude of the two components will alter which of the two equilibrium positions is stable and which is unstable.
+
+
+\begin{figure}
+\captionsetup{width=0.6\textwidth,font={sf,scriptsize},labelfont=bf}
+\centering
+\includegraphics[width=0.5\textwidth]{Copper_800_rel_energies}
+\caption[The energy changes with dislocation position for  copper.]{The energy changes with position for a dislocation in copper showing the two components of the energy, the strain energy and the misalignment energy, and the total energy. This simulation extended \num{800} Burgers vectors from the dislocation core, or around \SI{04}{\micro\meter}.\label{fig:copper_800_rel_energies}}
+\end{figure}
+
+
+
+
+To undertake further analysis the energy variation can be fitted with a simple empirical function:
+\begin{equation}
+U = \sum^N_n C_n \cos (2 \pi n \alpha) \label{eqn:empirical_function}
+\end{equation}
+where $C_n$ are the parameters to be fitted, $n$ is an integer between $0$ and $N$ and $\alpha$ is the displacement of the dislocation from the initial position as a fraction of the Burgers vector. Usually it was found that $N=4$ gave a good fit to the calculated energy variations. Since this is an easily differentiable function, the stress can be calculated in a straightforward manner from the gradient:
+\begin{equation}
+\tau = \frac{dU}{d\alpha} \frac{1}{lb^2}
+\end{equation}
+where $l$ is the length of dislocation line and $b$ is the Burgers vector. The gradient is readily calculated by:
+\begin{equation}
+\frac{dU}{d\alpha} = \sum_n^N - 2 \pi C_n \sin ( 2 \pi n \alpha )
+\end{equation}
+
+This provides a smooth and differentiable function that both allows for noise in the data and makes calculating the Peierls stress easier. The Peierls stress is the maximum value of the stress, which occurs at the point of maximum gradient $dU/d\alpha$, i.e. where:
+\begin{equation}
+\frac{d^2U}{d\alpha^2} = \sum_n^N -4 \pi^2 n^2 C_n \cos ( 2 \pi n \alpha ) = 0
+\end{equation}
+
+A script was written to do this fitting and gradient calculation automatically; the code is included in an archive which can be found in \cite{code}. An example of this sort of fit is shown in \autoref{fig:empirical_fit}. For the example of copper above, this yields a Peierls stress of \SI{8.98}{\mega\pascal} or, as a fraction of the shear modulus, \num{2.54e-4}\,$G$. This is approximately 10 times larger than the value estimated by experiment \cite{Wang1996}. However, for very soft materials the error in such experiments can be very large.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{Empirical_Fit}
+\captionsetup{width=0.6\textwidth,font={sf,scriptsize},labelfont=bf}
+\caption[Empirical fit to the variation in energy with dislocation position.]{Empirical fit to the dislocation energy as it varies with dislocation position using 4 terms. The fit is good, so can be reliably used for further analysis.\label{fig:empirical_fit}}
+\end{figure}
+
+
+To characterise the dependence of the model on the volume of crystal modelled, various simulation sizes were modelled for dislocations in copper. The size here is the range about the core of the dislocation in the slip direction and normal to the slip planes, while symmetry was exploited along the dislocation line to model only one repeat unit. The resulting simulated crystal therefore has a rectangular cross-section, rather than, say, cylindrical.
+
+%Schematic?
+
+\begin{figure}
+\centering
+\begin{subfigure}{0.4\textwidth}
+\centering
+\includegraphics[width=\textwidth]{Tp_vs_size}
+\caption{The variation of the calculated Peierls stress with simulation size.}
+\end{subfigure}
+~
+\begin{subfigure}{0.4\textwidth}
+\centering
+\includegraphics[width=\textwidth]{Energy_vs_size}
+\caption{The variation of the calculated dislocation line energy with the simulation size and a best fit line for a logarithmic function.\label{fig:energy_vs_size}}
+\end{subfigure}
+\captionsetup{width=0.9\textwidth,font={sf,scriptsize},labelfont=bf}
+\caption[The effect of simulation size on dislocation energy and Peierls stress.]{Plots characterising the sensitivity of the model to the simulation size. The value of the Peierls stress is quite quickly converged to a constant, the energy in fact increases logarithmically, as shown by the best fit line.\label{fig:effect_of_size_on_simulation}}
+\end{figure}
+
+\begin{figure}
+\captionsetup{width=0.6\textwidth,font={sf,scriptsize},labelfont=bf}
+\centering
+\includegraphics[width=0.5\textwidth]{tp_G_vs_d_b}
+\caption[A comparison of predicted Peierls Stresses against previous estimates.]{A comparison of predicted Peierls Stresses against experimental estimates \cite{Wang1996} and a previous model \cite{Clegg2006} for an isotropic material, the highest for a screw dislocation and the others are for edge dislocations where $\nu=$ 0.1, 0.2 and 0.3. \label{fig:tp_vs_d_b}}
+\end{figure}
+
+
+The energy and Peierls stresses were calculated and are presented in \autoref{fig:effect_of_size_on_simulation}. The effects of size are limited to a small range for this elastic simulation, with the Peierls stress converging to \SI{1}{\percent} when the simulation is  \SI{\sim 30}{\nano\meter} across, which is around a hundred Burgers vectors.
+
+The variation of energy with respect to simulation size does not converge, as can be seen in \autoref{fig:energy_vs_size}. However this is expected: as derived by \citet{Nabarro1947} the energy of a single dislocation in an otherwise perfect cylindrical crystal will vary logarithmically with the radius of the crystal. A best fit line is shown in \autoref{fig:energy_vs_size}, with an equation of the form:
+\begin{equation}
+y = c_1 + c_2 \log \left( x \right)
+\end{equation}
+which fits the results well. This is seen in the current work because the displacement field, \autoref{eqn:displacement_field},  includes a logarithmic term, whereas previous models have usually been limited to displacements parallel to the slip direction, at least in the far field.
+
+
+
+The Peierls stress was calculated for a number of phases and compared with experiment and previous models, and is shown in \autoref{fig:tp_vs_d_b}. As can be seen the qualitative trends are preserved, with the same trend in Peierls stress with lattice geometry observed. However the values predicted  differ systematically from experiment: at low values of $d/b$ the current model underestimates the Peierls stress and at high values of $d/b$ the model overestimates the Peierls stress. This weaker influence of lattice geometry on the Peierls stress is consistent with previous Peierls models that have a periodicity of $b$ rather than $^b\!/_2$ \cite{Lu2000peierls}. The model is therefore limited as a quantitative predictive tool, but should allow qualitative comparisons to be undertaken.
+
+The effect of changes in the single crystal elastic tensor were assessed for the \ce{Fe3C} structure, cementite. Work by Miles Stopher and David Bombac on the effects of hydrogen embrittlement in steels have assessed the effects of hydrogen on the elastic tensor \cite{Stopher2017}. It is expected from experiment \cite{Stopher2017} that a softening of the cementite phase occurs, allowing dislocation mediated dissolution. The elastic tensors for the four compositions, \SI{0}{at\percent}, \SI{5}{at\percent}, \SI{7}{at\percent}, \SI{10}{at\percent} hydrogen, that were investigated are given in \autoref{sec:elastic_tensors}.
+
+
+
+The Peierls analysis results are shown in \autoref{fig:tp_cementite}. There is little to no change in the Peierls stress at hydrogen loadings of below \SI{7}{\percent}, but there is a clear and large drop in the Peierls stress for cementite between \SI{7}{\percent} and \SI{10}{\percent}. While, as seen earlier, the quantitative results of the model may not be directly comparable with experiment, the relative changes in behaviour are reliable. This is consistent with the idea that cementite is softened by the addition of hydrogen.
+\begin{figure}
+\captionsetup{width=0.6\textwidth}
+\centering
+\includegraphics[width=0.5\textwidth]{Peierls_Stress_Cementite}
+\caption[The effect of hydrogen on the Peierls stress of cementite]{The effect of hydrogen loading on the predicted Peierls stress of cementite on the [100](010) slip system.\label{fig:tp_cementite}}
+\end{figure}
+
+
+\FloatBarrier
+\subsection{Dislocations in ionic solids}
+\FloatBarrier
+
+
+Energy changes in ionic solids were fitted with an empirical function in a similar manner to that described in section~\ref{sec:elastic_results} except now the energy components are not misalignment and strain energy terms but electrostatic and short-range terms. This was done for the two slip systems known to operate in crystals with the rocksalt structure, the <1\,1\,0>\{0\,0\,1\} and the <1\,1\,0>\{1\,\={1}\,0\}.
+
+
+First the energy was calculated via a Python program, the code is available online \cite{code}, that used a simple approach: calculating the energy for all the interactions in the crystal with no cut offs. This gives the energy without the risk of artefacts that can be introduced by cut offs, but at the cost of computational time. Importantly the energy of the dislocation itself is difficult to estimate, since the energy calculated by this method includes the energy of the whole crystal, i.e.\ the energy of the free surfaces and so on. This was addressed by assuming that the energy changes were due to the dislocation alone, which is reasonable because the faces of the dislocated crystal are far enough from the dislocation not to deform very much.
+
+
+The energy changes calculated in this way, using the same optimisation procedure as described above, are shown in \autoref{fig:NaCl_energy_changes}. There is a curious result that the periodicity appears to be different for the two dislocations, a period of $b$ for the <1\,1\,0>\{1\,\={1}\,0\} slip system and $^b\!/_2$ for the <1\,1\,0>\{0\,0\,1\} slip system. This can be explained in terms of the crystal structure. 
+
+Considering the core structures shown in \autoref{fig:Schematic_NaCl_dislocs}, for the <1\,1\,0>\{0\,0\,1\} slip system the $\alpha=0.5$ position is nearly equivalent to the $\alpha=0$ position. The two positions can be related by swapping all the cations for anions and vice versa. The result is that the electrostatic energy must be the same. Since the short range potential used here is symmetrical for anion-cation or cation-anion interactions, all the first neighbour interactions will also be the same since there are no cation-cation or anion-anion neighbours to swap. There will be differences in the second nearest neighbours, which change from anion-anion to cation-cation interactions and vice versa. This difference is observed; the halfway position is lower in energy than the initial position by \SI{1.4e-22}{\joule\per\meter}. This is a very small difference as expected, but is within the expected precision of the calculation. Thus strictly the period of the dislocation energy is $b$, but for practical purposes can be treated as $^b\!/_2$. Such a similarity does not exist for the <1\,1\,0>\{1\,\={1}\,0\} slip system, so the period is more plainly $b$ without extra minima.
+
+
+
+
+
+\begin{figure}
+\centering
+\begin{subfigure}{0.4\textwidth}
+\centering
+\includegraphics[width=\textwidth]{NaCl_110_001_U_vs_alpha}
+\caption{The energy changes with displacement of a <110>\{001\} dislocation in NaCl.\label{fig:NaCl_110_001_energy_changes}}
+\end{subfigure}
+~
+\begin{subfigure}{0.4\textwidth}
+\centering
+\includegraphics[width=\textwidth]{NaCl_110_110_U_vs_alpha}
+\caption{The energy changes with displacement of a <110>\{1\={1}0\} dislocation in NaCl.\label{fig:NaCl_110_110_energy_changes}}
+\end{subfigure}
+\caption[The energy changes with position of dislocation in NaCl.]{The energy changes with position of dislocation in NaCl. Note that the scale of the energy changes is much larger for the <110>\{1\={1}0\} slip system.\label{fig:NaCl_energy_changes}}
+
+\end{figure}
+
+
+
+\begin{figure}
+\centering
+\begin{subfigure}{55mm}
+\centering
+\includegraphics[width=\textwidth]{zero}
+\caption{}
+\end{subfigure}
+~
+\begin{subfigure}{55mm}
+\centering
+\includegraphics[width=\textwidth]{half}
+\caption{}
+\end{subfigure}
+
+
+\caption[The symmetrical positions of dislocations in NaCl.]{Dislocations in NaCl showing the similarity between the two symmetrical positions; if the short range potential were applied to only first neighbours these would be equivalent, related by reflection through the plane normal to the slip direction, in this case [1\,1\,0]. Graphics prepared with VESTA \cite{Momma2011}.\label{fig:NaCl_symmetry}}
+\end{figure}
+
+
+The data was fitted using the function given in \autoref{eqn:empirical_function}, and this gave the Peierls stress of the two systems as \SI{76.6}{\mega\pascal} for the <1\,1\,0>\{0\,0\,1\} slip system, and \SI{63.7}{\giga\pascal} for the <1\,1\,0>\{1\,\={1}\,0\} system. The value for <1\,1\,0>\{0\,0\,1\} system within a factor of 2 of experimental measurements of the Peierls stress, \citet{Haasen1985} estimated the Peierls stress of this slip system to be \SI{140}{\mega\pascal}. The value for the <1\,1\,0>\{1\,\={1}\,0\} slip system is clearly not in agreement with the estimated Peierls stress of \SI{10}{\mega\pascal}.
+
+
+
+The variation of the dislocation width is shown in \autoref{fig:NaCl_w_vs_alpha}. The period of the variation of the width for the two slip systems is the same as that of the energy variation. The <1\,1\,0>\{0\,0\,1\} slip system shows the expected behaviour, small and smooth variation, as shown in \autoref{fig:NaCl_110_001_w_variation}. There is some noise in the graph showing that perhaps the model has not fully converged on the lowest energy value. There is a much larger variation in the width for the <1\,1\,0>\{1\,\={1}\,0\} slip system, \autoref{fig:NaCl_110_110_w_variation}, and there is a discontinuity in the value at around $\alpha=0.1$. This corresponds to the very steep part of the energy variation shown in \autoref{fig:NaCl_110_110_energy_changes}.
+
+
+\begin{figure}
+\centering
+\begin{subfigure}{0.4\textwidth}
+\centering
+\includegraphics[width=\textwidth]{NaCl_110_001_w_vs_a}
+\caption{The variation of the dislocation width with dislocation position for the <1\,1\,0>\{0\,0\,1\} slip system. \label{fig:NaCl_110_001_w_variation}}
+\end{subfigure}
+~
+\begin{subfigure}{0.4\textwidth}
+\centering
+\includegraphics[width=\textwidth]{NaCl_110_110_w_vs_a}
+\caption{The variation of the dislocation width with dislocation position for <1\,1\,0>\{1\,\={1}\,0\} slip system.\label{fig:NaCl_110_110_w_variation}}
+\end{subfigure}
+\caption[The variation of the dislocation width with position for NaCl.]{The variation of the dislocation width with position for the two slip systems of NaCl. The <1\,1\,0>\{0\,0\,1\} slip system shows the expected behaviour, showing relatively small variation in a smooth and continuous manner. The <1\,1\,0>\{1\,\={1}\,0\} slip system shows a much larger variation and a rapid if not discontinuous change at around $\alpha=0.1$.\label{fig:NaCl_w_vs_alpha}}
+\end{figure}
+
+One problem with modelling dislocations in ionic materials is the computational complexity compared to the elastic case. The model must be three dimensional since the interactions are three dimensional, which means the number of atoms is larger. Additionally the calculation scales more quickly with the size of the simulation, since now there are $n^2$ energy calculations to do for $n$ atoms rather than simply $n$ for the elastic energy calculation. Thus despite using the NumPy \citep{Numpy2011}, which is well optimised to efficiently undertake calculations, the scale of the simulation was much more limited, extending only tens of nanometers rather than hundreds from the dislocation core. Given the inherently long range nature of the electrostatic interaction this is potentially insufficient.
+
+To address this, the model was adapted to use the LAMMPS \cite{LAMMPS_web} software package to undertake the energy calculation, using the Coulombic and Lennard-Jones calculators built in to the LAMMPS package. An example script and input files are included in \autoref{sec:lammps_input}. The principle is much the same, though now the energy calculation is using the highly optimised LAMMPS routines. These rely on choosing appropriate parameters and settings, which was done according to the LAMMPS manual \cite{LAMMPS_web}. One particular advantage is the ability to employ periodic boundary conditions along the length of the dislocation line, thus removing potential artefacts that might arise from the termination of the dislocation.
+
+The results for the <1\,1\,0>\{1\,\={1}\,0\} slip system are shown in \autoref{fig:NaCl_110_110_U_vs_a_LAMMPS}. The variation is quite similar to that found using the na\"ive Python based energy calculator despite the periodic boundary conditions along the dislocation line and extending the simulation out from the core to \SI{\sim 100}{\nano\meter}. The maximum gradient of the best fit achievable using \autoref{eqn:empirical_function} gives the Peierls stress as \SI{63.8}{\giga\pascal}, which is very close to the the result obtained earlier, with an original calculator written in Python, as shown in \autoref{fig:NaCl_110_110_energy_changes}. 
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{NaCl_110_110_U_vs_alpha_LAMMPS}
+\caption[The energy changes of a dislocation in NaCl via LAMMPS.]{The energy variation of a <1\,1\,0>\{1\,\={1}\,0\} dislocation in NaCl using the energy calculations available in LAMMPS. There is a lot of scatter, which does not appear to be random, but is likely due to insufficiently tight convergence criteria.\label{fig:NaCl_110_110_U_vs_a_LAMMPS}}
+\end{figure}
+
+The variation of the dislocation width with $\alpha$ is shown in \autoref{fig:LAMMPS_w_vs_a_NaCl}. There are some differences between the Python based model and the LAMMPS based model. Both models show a discontinuity in the width, dropping rapidly around $\alpha=0.1$, but the LAMMPS based model predicts zero width for $\alpha$ \numrange{\sim 0.1}{ 0.9}, where the Python based model predicted an increase to a maximum at $\alpha=0.5$. This might be attributable to the size of the simulation or the termination of the dislocation since those are the principle differences between the two models.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{NaCl_110_110_w_vs_a_LAMMPS}
+\captionsetup{width=0.6\textwidth}
+\caption[The variation of the dislocation width for the hard slip system in NaCl.]{The variation of the dislocation width with position for the <1\,1\,0>\{1\,\={1}\,0\} slip system in NaCl when using the energy as calculated by the LAMMPS software package.\label{fig:LAMMPS_w_vs_a_NaCl}}
+\end{figure}
+
+
+It therefore seems unlikely that simulation size or the termination of the dislocation at the free surface were major problems, instead some other factor is likely at fault. 
+
+This model of a dislocation in ionic material makes a number of assumptions that it may not be valid. In the definition of the displacement field the model has assumed that all the atoms follow the same displacements that as would occur in a continuous isotropically elastic medium. This might be invalid in more than one way: firstly, there is no possibility of local deviation from the displacement field, which particularly likely to occur in the core region; secondly there is the possibility that given the long range interactions across regions of the crystals are quite unlike the elastic energy calculations used to derive the displacement field the entire form of the field may be invalid for this application. 
+
+The second here seems unlikely given that the harder slip system was well described by the model, but the possibility of core reconstruction has been examined before, such as \citet{Hoagland1976} who observed a deviation from the ideal Volterra dislocation displacements. This could be addressed by the incorporation of more flexible boundary conditions such as those used by Hoagland \emph{et al}.
+
+Another set of simplifications have been made in the interaction potential used here. The Lennard-Jones potential is one of the simplest potentials that can predict any material behaviour, but more accurate, if more computationally expensive, potentials do exist, incorporating the polarisability of atoms and more accurately representing the Pauli exclusion energy.
+
+Finally there is a possible source of error in the experimental evidence for the low Peierls stress on this softer slip system. All experiments necessarily occur at finite temperatures, while the Peierls stress is by definition only valid for \SI{0}{\kelvin}. It has been observed that dislocations in alkali halides can deviate from the usual increase in critical resolved shear stress for dislocation motion as the temperature approaches absolute zero. 
+
+There  are two effects noted by \citet{Haasen1985} that could cause the experimental estimate of the Peierls stress to be an under estimate. One effect is that the first \SI{1}{\percent} of impurity atoms can cause softening at low temperatures (<\SI{30}{\kelvin}) can make the nucleation of kinks easier and so lower the stress required to move a dislocation. The other effect  that has been suggested to explain anomalies at low temperatures is that dislocations might tunnel through the Peierls barrier in NaCL and LiF at very low temperatures (<\SI{5}{\kelvin}).
+
+
+
+
+\section{Conclusions}
+
+A parametrised form of the displacement field around an edge dislocation has been reached by adapting the solution for an isotropic elastic medium. This allows the construction of atomic configurations in three dimensions rather than one. This formulation also reduces the parameter space that must be searched for the optimal dislocation structure to a tractable size.
+
+A series of Python modules have been written to allow the modelling of dislocations in a variety of materials using a variational approach to minimise the energy of the atomic configuration for every dislocation position. The Peierls stress is calculated from the maximum gradient of the dislocation energy. The modular nature allows functionality to be added or altered easily. 
+
+The first module builds the dislocation by constructing an array representation of atomic coordinates around the dislocation core via the adapted displacement field. This is deliberately left extensible to allow, for example, the addition of a screw dislocation or core reconstruction.
+
+Two further modules have been written to calculate the energy of a dislocation as represented by an array of atomic coordinates. One builds on the existing Peierls models that use linear elasticity for strain energies away from the slip plane and a misalignment potential for the slip plane, either approximated as a sinusoid that obeys Hooke's law at low strains, or fitted empirically to \emph{ab initio} calculations of the $\gamma$-surface. This module extends the Peierls analysis to use the full stiffness tensor rather than simple elastic constants. The other uses the electrostatic interaction and the Lennard-Jones potential to calculate the energy of a dislocation in an ionic solid.
+
+The elastic Peierls model is in agreement with the trends in material behaviour observed in experiment and predicted by previous models. However the effect of lattice geometry is not as strong in this model as is observed by experiment, consistent with previous models that have a periodicity of a full, rather than a half,  Burgers vector, thus only qualitative conclusions can be drawn. The model does predict a softening of the cementite structure when hydrogen is added, as predicted by experiment.
+
+The ionic Peierls model successfully predicts the behaviour of the <1\,1\,0>\{0\,0\,1\} slip system in \ce{NaCl} as observed by experiment. The electrostatic and short-range repulsion energy components vary out of phase with each other, in a parallel to the strain energy and misalignment energy in traditional Peierls models. The behaviour of the <1\,1\,0>\{1\,\={1}\,0\} slip system is not successfully predicted. It was shown that this was not due to the size of the simulation or the termination of the dislocation line at a free surface by the use of LAMMPS as an energy calculator, which allowed much larger simulations and the use of periodic boundary conditions. 
+
+There are a number of assumptions inherent to the model, either implicitly or explicitly. The application of the adapted Volterra displacement field is a central assumption in this model, and this could be investigated by allowing the coordinates of atoms within some core region to relax freely while applying the displacement field to the outer regions. This is challenging due to the increased complexity of the optimisation of the dislocation structure as more parameters are allowed to vary independently. Another simplification is the use of the Lennard-Jones potential, which ignores polarisability, which is only an issue in the softer <1\,1\,0>\{1\,\={1}\,0\} slip system. More realistic potentials are available either to be implemented directly, or within projects such as LAMMPS. A final possibility that is not investigated here is the role of point defects in dislocation motion in the alkali halides. These are known to be important but the model assumes that the crystals are perfect aside from the single edge dislocation. This could be addressed with molecular dynamics, but would require significantly more computing power.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
